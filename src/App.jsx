@@ -4,21 +4,29 @@ import QuizScreen from './components/QuizScreen'
 import ResultScreen from './components/ResultScreen'
 import { questions } from './data/questions'
 
+const QUIZ_SIZE = 10
+
+function pickRandom(arr, n) {
+  return [...arr].sort(() => Math.random() - 0.5).slice(0, n)
+}
+
 export default function App() {
   const [screen, setScreen] = useState('start')
+  const [activeQuestions, setActiveQuestions] = useState([])
   const [currentQ, setCurrentQ] = useState(0)
   const [score, setScore] = useState(0)
   const [answers, setAnswers] = useState([])
 
   const handleStart = () => {
-    setScreen('quiz')
+    setActiveQuestions(pickRandom(questions, QUIZ_SIZE))
     setCurrentQ(0)
     setScore(0)
     setAnswers([])
+    setScreen('quiz')
   }
 
   const handleAnswer = (selectedIndex) => {
-    const q = questions[currentQ]
+    const q = activeQuestions[currentQ]
     const isCorrect = selectedIndex === q.correct
     if (isCorrect) setScore((s) => s + 1)
     setAnswers((prev) => [
@@ -37,7 +45,7 @@ export default function App() {
   }
 
   const handleNext = () => {
-    if (currentQ + 1 >= questions.length) {
+    if (currentQ + 1 >= activeQuestions.length) {
       setScreen('result')
     } else {
       setCurrentQ((q) => q + 1)
@@ -50,13 +58,15 @@ export default function App() {
 
   return (
     <div className="app-wrapper">
-      {screen === 'start' && <StartScreen onStart={handleStart} total={questions.length} />}
+      {screen === 'start' && (
+        <StartScreen onStart={handleStart} total={QUIZ_SIZE} totalPool={questions.length} />
+      )}
       {screen === 'quiz' && (
         <QuizScreen
           key={currentQ}
-          question={questions[currentQ]}
+          question={activeQuestions[currentQ]}
           questionIndex={currentQ}
-          total={questions.length}
+          total={activeQuestions.length}
           onAnswer={handleAnswer}
           onNext={handleNext}
         />
@@ -64,7 +74,7 @@ export default function App() {
       {screen === 'result' && (
         <ResultScreen
           score={score}
-          total={questions.length}
+          total={activeQuestions.length}
           answers={answers}
           onRestart={handleRestart}
         />

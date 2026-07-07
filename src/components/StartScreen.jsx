@@ -1,4 +1,4 @@
-export default function StartScreen({ onStart, total }) {
+export default function StartScreen({ onStart, total, totalPool }) {
   return (
     <div className="start-screen">
       <div className="start-deco top-deco">⚔️ 🏯 ⚔️</div>
@@ -17,7 +17,7 @@ export default function StartScreen({ onStart, total }) {
         <div className="start-info-box">
           <div className="start-info-row">
             <span>📋</span>
-            <span>ぜんぶで <strong>{total}問</strong></span>
+            <span><strong>{totalPool}問</strong>の中からランダムに <strong>{total}問</strong> 出るよ！</span>
           </div>
           <div className="start-info-row">
             <span>💡</span>
