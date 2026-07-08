@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { playCorrect, playWrong } from '../utils/sounds'
 
 const LABELS = ['Ａ', 'Ｂ', 'Ｃ', 'Ｄ']
 const COLORS = ['btn-red', 'btn-blue', 'btn-green', 'btn-purple']
@@ -9,12 +10,14 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
 
   const isAnswered = selected !== null
   const isCorrect = isAnswered && selected === question.correct
-  const progress = ((questionIndex) / total) * 100
+  const progress = (questionIndex / total) * 100
 
   const handleSelect = (index) => {
     if (isAnswered) return
     setSelected(index)
     onAnswer(index)
+    if (index === question.correct) playCorrect()
+    else playWrong()
   }
 
   return (
@@ -34,67 +37,49 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
 
       {/* ── question card ── */}
       <div className="question-card">
-        <div className="question-emoji" role="img" aria-hidden="true">
-          {question.emoji}
-        </div>
+        <div className="question-emoji">{question.emoji}</div>
         <p className="question-text">{question.question}</p>
-
         <button
           className={`hint-toggle ${showHint ? 'hint-open' : ''}`}
           onClick={() => setShowHint(!showHint)}
-          aria-expanded={showHint}
         >
           💡 {showHint ? 'ヒントを隠す' : 'ヒントを見る'}
         </button>
+        {showHint && <div className="hint-box">👉 {question.hint}</div>}
+      </div>
 
-        {showHint && (
-          <div className="hint-box">
-            👉 {question.hint}
+      {/* ── answer area: choices OR feedback ── */}
+      <div className="answer-area">
+        {!isAnswered ? (
+          <div className="choices-grid">
+            {question.choices.map((choice, i) => (
+              <button
+                key={i}
+                className={`choice-btn ${COLORS[i]}`}
+                onClick={() => handleSelect(i)}
+              >
+                <span className="choice-label">{LABELS[i]}</span>
+                <span className="choice-text">{choice}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className={`feedback-card ${isCorrect ? 'feedback-ok' : 'feedback-ng'}`}>
+            <div className="feedback-header">
+              <span className="feedback-icon">{isCorrect ? '🎉' : '😢'}</span>
+              <span className="feedback-title">
+                {isCorrect
+                  ? 'せいかい！'
+                  : `ざんねん！正解は「${question.choices[question.correct]}」`}
+              </span>
+            </div>
+            <p className="feedback-explanation">{question.explanation}</p>
+            <button className="next-btn" onClick={onNext}>
+              {questionIndex + 1 >= total ? '🏆 けっかをみる！' : 'つぎの問題へ →'}
+            </button>
           </div>
         )}
       </div>
-
-      {/* ── choices ── */}
-      <div className="choices-grid">
-        {question.choices.map((choice, i) => {
-          let extra = ''
-          if (isAnswered) {
-            if (i === question.correct) extra = ' choice-correct'
-            else if (i === selected) extra = ' choice-wrong'
-            else extra = ' choice-dim'
-          }
-          return (
-            <button
-              key={i}
-              className={`choice-btn ${COLORS[i]}${extra}`}
-              onClick={() => handleSelect(i)}
-              disabled={isAnswered}
-              aria-label={`選択肢 ${LABELS[i]}: ${choice}`}
-            >
-              <span className="choice-label">{LABELS[i]}</span>
-              <span className="choice-text">{choice}</span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* ── feedback ── */}
-      {isAnswered && (
-        <div className={`feedback-card ${isCorrect ? 'feedback-ok' : 'feedback-ng'}`}>
-          <div className="feedback-header">
-            <span className="feedback-icon">{isCorrect ? '🎉' : '😢'}</span>
-            <span className="feedback-title">
-              {isCorrect
-                ? 'せいかい！'
-                : `ざんねん！正解は「${question.choices[question.correct]}」だよ`}
-            </span>
-          </div>
-          <p className="feedback-explanation">{question.explanation}</p>
-          <button className="next-btn" onClick={onNext}>
-            {questionIndex + 1 >= total ? '🏆 けっかをみる！' : 'つぎの問題へ →'}
-          </button>
-        </div>
-      )}
     </div>
   )
 }
