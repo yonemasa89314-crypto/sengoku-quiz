@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { playCorrect, playWrong } from '../utils/sounds'
+import { addFurigana } from '../utils/furigana'
 
 const LABELS = ['Ａ', 'Ｂ', 'Ｃ', 'Ｄ']
 const COLORS = ['btn-red', 'btn-blue', 'btn-green', 'btn-purple']
@@ -38,14 +39,22 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
       {/* ── question card ── */}
       <div className="question-card">
         <div className="question-emoji">{question.emoji}</div>
-        <p className="question-text">{question.question}</p>
+        <p
+          className="question-text"
+          dangerouslySetInnerHTML={{ __html: addFurigana(question.question) }}
+        />
         <button
           className={`hint-toggle ${showHint ? 'hint-open' : ''}`}
           onClick={() => setShowHint(!showHint)}
         >
           💡 {showHint ? 'ヒントを隠す' : 'ヒントを見る'}
         </button>
-        {showHint && <div className="hint-box">👉 {question.hint}</div>}
+        {showHint && (
+          <div
+            className="hint-box"
+            dangerouslySetInnerHTML={{ __html: '👉 ' + addFurigana(question.hint) }}
+          />
+        )}
       </div>
 
       {/* ── answer area: choices OR feedback ── */}
@@ -59,7 +68,10 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
                 onClick={() => handleSelect(i)}
               >
                 <span className="choice-label">{LABELS[i]}</span>
-                <span className="choice-text">{choice}</span>
+                <span
+                  className="choice-text"
+                  dangerouslySetInnerHTML={{ __html: addFurigana(choice) }}
+                />
               </button>
             ))}
           </div>
@@ -67,11 +79,14 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
           <div className={`feedback-card ${isCorrect ? 'feedback-ok' : 'feedback-ng'}`}>
             <div className="feedback-header">
               <span className="feedback-icon">{isCorrect ? '🎉' : '😢'}</span>
-              <span className="feedback-title">
-                {isCorrect
-                  ? 'せいかい！'
-                  : `ざんねん！正解は「${question.choices[question.correct]}」`}
-              </span>
+              <span
+                className="feedback-title"
+                dangerouslySetInnerHTML={{
+                  __html: isCorrect
+                    ? 'せいかい！'
+                    : `ざんねん！正解は「${addFurigana(question.choices[question.correct])}」`,
+                }}
+              />
             </div>
             <p className="feedback-explanation">{question.explanation}</p>
             <button className="next-btn" onClick={onNext}>
