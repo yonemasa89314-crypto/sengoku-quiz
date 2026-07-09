@@ -77,18 +77,22 @@ export default function QuizScreen({ question, questionIndex, total, onAnswer, o
           </div>
         ) : (
           <div className={`feedback-card ${isCorrect ? 'feedback-ok' : 'feedback-ng'}`}>
-            <div className="feedback-header">
-              <span className="feedback-icon">{isCorrect ? '🎉' : '😢'}</span>
-              <span
-                className="feedback-title"
-                dangerouslySetInnerHTML={{
-                  __html: isCorrect
-                    ? 'せいかい！'
-                    : `ざんねん！正解は「${addFurigana(question.choices[question.correct])}」`,
-                }}
-              />
+            {/* スクロール対象はここだけ */}
+            <div className="feedback-body">
+              <div className="feedback-header">
+                <span className="feedback-icon">{isCorrect ? '🎉' : '😢'}</span>
+                <span
+                  className="feedback-title"
+                  dangerouslySetInnerHTML={{
+                    __html: isCorrect
+                      ? 'せいかい！'
+                      : `ざんねん！正解は「${addFurigana(question.choices[question.correct])}」`,
+                  }}
+                />
+              </div>
+              <p className="feedback-explanation">{question.explanation}</p>
             </div>
-            <p className="feedback-explanation">{question.explanation}</p>
+            {/* ボタンは常に最下部に固定 */}
             <button className="next-btn" onClick={onNext}>
               {questionIndex + 1 >= total ? '🏆 けっかをみる！' : 'つぎの問題へ →'}
             </button>

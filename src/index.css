@@ -178,17 +178,26 @@ rt   { font-size: 0.55em; font-weight: 500; letter-spacing: 0.01em; }
 .btn-green  { background: linear-gradient(135deg, #2e7d32, #388e3c); }
 .btn-purple { background: linear-gradient(135deg, #6a1b9a, #7b1fa2); }
 
-/* feedback card — fills answer area, scrollable if needed */
+/* feedback card — fills answer area */
 .feedback-card {
   flex: 1;
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
+  gap: 8px;
+  overflow: hidden;          /* カード自体はスクロールしない */
   box-shadow: var(--shadow);
   animation: slideUp .25s ease;
+}
+/* 説明文だけがスクロール対象 */
+.feedback-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
