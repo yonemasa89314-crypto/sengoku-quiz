@@ -93,7 +93,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .progress-total { color: #aaa; }
 .progress-unit { color: #aaa; font-size: .85rem; margin-left: 2px; }
 
-/* question card — compact */
+/* question card — 2/3 of remaining height */
 .question-card {
   background: var(--card);
   border-radius: var(--radius);
@@ -102,8 +102,11 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  justify-content: center;
+  gap: 10px;
+  flex: 2;
+  min-height: 0;
+  overflow-y: auto;
   animation: slideDown .25s ease;
 }
 
